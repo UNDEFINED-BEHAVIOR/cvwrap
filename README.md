@@ -1,6 +1,10 @@
-# cvwrap
+# cvwrap OpenCL demo
 This fork demonstrates OpenCL interoperation with 3rd party libraries.
-
+## Branches:
+master: modified cgwrap
+vexcl:
+trisycl:
+amp:
 ---
 
 A Maya wrap deformer that is faster than Maya's wrap deformer, can be rebounded, has a GPU implementation, and supports inverted front of chain blend shapes.
