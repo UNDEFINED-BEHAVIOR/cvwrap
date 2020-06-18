@@ -1,12 +1,32 @@
-cmake_minimum_required(VERSION 2.6)
-project(cvwrap)
+project(cvwrap-reference)
 
-set(PROJECT_PATH ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT})
-set(CMAKE_INSTALL_PREFIX ${PROJECT_PATH})
-set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cgcmake/modules)
+set(SOURCE_FILES
+    "pluginMain.cpp"
+    "cvWrapCmd.cpp"
+    "cvWrapCmd.h"
+    "cvWrapDeformer.cpp"
+    "cvWrapDeformer.h"
+    "bindingio.cpp"
+    "bindingio.h"
+    "common.cpp"
+    "common.h"
+    "cvwrap.cl"
+)
 
-add_subdirectory(src)
+if (WIN32)
+    set(COMPILE_FLAGS "/arch:AVX")
+else()
+    set(COMPILE_FLAGS "-mavx")
+endif()
 
-configure_file("${CMAKE_CURRENT_SOURCE_DIR}/module.txt" "${PROJECT_PATH}/${PROJECT_NAME}.txt")
+find_package(Maya REQUIRED)
 
-install(DIRECTORY scripts DESTINATION .)
+add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES})
+target_link_libraries(${PROJECT_NAME} PRIVATE Maya::Maya)
+target_include_directories(${PROJECT_NAME} PRIVATE Maya::Maya)
+target_compile_options(${PROJECT_NAME} PRIVATE ${COMPILE_FLAGS})
+MAYA_PLUGIN(${PROJECT_NAME})
+
+install(TARGETS ${PROJECT_NAME} ${MAYA_TARGET_TYPE} DESTINATION plug-ins)
+install(FILES "cvwrap.cl" DESTINATION plug-ins)
+

@@ -1,3 +1,0 @@
-[submodule "cgcmake"]
-	path = cgcmake
-	url = git@github.com:chadmv/cgcmake.git
