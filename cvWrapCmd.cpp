@@ -126,7 +126,9 @@ MStatus CVWrapCmd::doIt(const MArgList& args) {
     CHECK_MSTATUS_AND_RETURN_IT(status);
 
     // Add the cvWrap creation command to the modifier.
-    MString command = "deformer -type cvWrap -n \"" + name_ + "\"";
+    MString command = "deformer -type ";
+    command += MString(CVWrap::kName);
+    command +=" -n \"" + name_ + "\"";
     for (unsigned int i = 0; i < pathDriven_.length(); ++i) {
       MFnDagNode fnDriven(pathDriven_[i]);
       command += " " + fnDriven.partialPathName();
