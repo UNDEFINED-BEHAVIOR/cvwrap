@@ -1,6 +1,9 @@
 #ifndef CVWRAPDEFORMER_H
 #define CVWRAPDEFORMER_H
 
+// This needs to be included first
+#include "common.h"
+
 #include <maya/MDGModifier.h>
 #include <maya/MFloatArray.h>
 #include <maya/MIntArray.h>
@@ -14,13 +17,13 @@
 #include <maya/MPxGPUDeformer.h>
 #include <maya/MGPUDeformerRegistry.h>
 #include <maya/MOpenCLInfo.h>
-#include <clew/clew_cl.h>
 
 #include <map>
 #include <vector>
-#include "common.h"
+
 
 struct TaskData {
+#include <vexcl/vector.hpp>
   MMatrix drivenMatrix;
   MMatrix drivenInverseMatrix;
   float envelope;

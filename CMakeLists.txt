@@ -1,4 +1,4 @@
-project(cvwrap-reference)
+project(cvwrap-vexcl)
 
 set(SOURCE_FILES
     "pluginMain.cpp"
@@ -14,15 +14,60 @@ set(SOURCE_FILES
 )
 
 if (WIN32)
+    set(Boost_USE_STATIC_LIBS ON)
+endif ()
+
+if (WIN32)
     set(COMPILE_FLAGS "/arch:AVX")
 else()
     set(COMPILE_FLAGS "-mavx")
 endif()
 
-add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES})
-target_link_libraries(${PROJECT_NAME} PRIVATE Maya::Maya)
-target_include_directories(${PROJECT_NAME} PRIVATE Maya::Maya)
-target_compile_options(${PROJECT_NAME} PRIVATE ${COMPILE_FLAGS})
+find_package(
+    OpenCL
+    # 1.1 
+    # EXACT
+)
+# todo resolve opencl conflicts
+find_package(
+    VexCL REQUIRED COMPONENTS
+    OpenCL
+)
+
+ADD_LIBRARY(
+    ${PROJECT_NAME}
+    SHARED
+    ${SOURCE_FILES}
+)
+
+TARGET_LINK_LIBRARIES(
+    ${PROJECT_NAME} 
+    PRIVATE 
+    VexCL::OpenCL
+    Maya::Maya
+    MayaAPIUtils
+)
+
+TARGET_INCLUDE_DIRECTORIES(
+    ${PROJECT_NAME}
+    PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    Maya::Maya
+)
+
+TARGET_COMPILE_OPTIONS(
+    ${PROJECT_NAME}
+    PRIVATE
+    ${COMPILE_FLAGS}
+)
+
+TARGET_COMPILE_DEFINITIONS(
+    ${PROJECT_NAME}
+    PUBLIC
+    __CL_ENABLE_EXCEPTIONS
+    CL_USE_DEPRECATED_OPENCL_1_1_APIS
+)
+
 MAYA_PLUGIN(${PROJECT_NAME})
 
 install(TARGETS ${PROJECT_NAME} ${MAYA_TARGET_TYPE} DESTINATION plug-ins)

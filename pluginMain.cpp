@@ -1,3 +1,8 @@
+// #include <CL/cl.h>
+// #include <CL/cl.hpp>
+// #include <CL/cl_platform.h>
+// #include <vexcl/vexcl.hpp>
+
 #include "cvWrapDeformer.h"
 #include "cvWrapCmd.h"
 
@@ -19,7 +24,7 @@ MStatus initializePlugin(MObject obj) {
 MStatus uninitializePlugin( MObject obj) {
   MStatus status;
   MFnPlugin plugin(obj);
-
+  
   status = plugin.deregisterCommand(CVWrapCmd::kName);
   CHECK_MSTATUS_AND_RETURN_IT(status);
   status = plugin.deregisterNode(CVWrap::id);

@@ -4,6 +4,15 @@
 
 #ifndef CVWRAP_COMMON_H
 #define CVWRAP_COMMON_H
+#define _SHOW_EXEC_PATH
+
+// CL include have to come before all anything else or template error will occurs..
+#include <CL/cl.h>
+// cl.hpp from vexcl
+#include <CL/cl.hpp>
+#include <CL/cl_platform.h>
+#include <vexcl/vexcl.hpp>
+
 
 #include <maya/MDagPath.h>
 #include <maya/MDoubleArray.h>
@@ -16,6 +25,8 @@
 #include <map>
 #include <vector>
 #include <set>
+
+#include "mayaApiUtils/miostream.h"
 
 #ifdef __AVX__
 #include <xmmintrin.h>

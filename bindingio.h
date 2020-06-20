@@ -1,6 +1,8 @@
 #ifndef CVWRAP_BindingIO_H
 #define CVWRAP_BindingIO_H
 
+#include "common.h"
+
 #include <maya/MMatrix.h>
 #include <maya/MObject.h>
 #include <maya/MString.h>
