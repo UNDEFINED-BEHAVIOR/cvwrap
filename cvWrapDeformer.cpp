@@ -1,3 +1,4 @@
+
 #include "cvWrapDeformer.h"
 #include <maya/MFnCompoundAttribute.h>
 #include <maya/MFnDoubleArrayData.h>
@@ -11,6 +12,7 @@
 #include <maya/MItGeometry.h>
 #include <maya/MNodeMessage.h>
 #include <maya/MPlugArray.h>
+#include <maya/MObjectHandle.h>
 #include <cassert>
 
 MTypeId CVWrap::id(0x0011580B);
@@ -270,6 +272,12 @@ MStatus CVWrap::setDependentsDirty(const MPlug& plugBeingDirtied, MPlugArray& af
 
 MStatus CVWrap::deform(MDataBlock& data, MItGeometry& itGeo, const MMatrix& localToWorldMatrix,
                        unsigned int geomIndex) {
+
+#ifdef _SHOW_EXEC_PATH
+  MObjectHandle thisHandle(thisMObject());
+  MINFO("cvWrap[" << thisHandle.hashCode() << "]: CPU DEFORM")
+#endif
+
   MStatus status;
   if (geomIndex >= taskData_.size()) {
     taskData_.resize(geomIndex+1);
@@ -456,20 +464,26 @@ CVWrapGPU::~CVWrapGPU() {
 }
 
 MPxGPUDeformer::DeformerStatus  CVWrapGPU::evaluate(MDataBlock& block,
-													const MEvaluationNode& evaluationNode,
-													const MPlug& plug,
-													const MGPUDeformerData& inputData,
-													MGPUDeformerData& outputData) {
-	// get the input GPU data and event
-	MGPUDeformerBuffer inputDeformerBuffer = inputData.getBuffer(sPositionsName());
-	const MAutoCLMem inputBuffer = inputDeformerBuffer.buffer();
-	unsigned int numElements = inputDeformerBuffer.elementCount();
-	const MAutoCLEvent inputEvent = inputDeformerBuffer.bufferReadyEvent();
+  const MEvaluationNode& evaluationNode,
+  const MPlug& plug,
+  const MGPUDeformerData& inputData,
+  MGPUDeformerData& outputData) {
 
-	// create the output buffer
-	MGPUDeformerBuffer outputDeformerBuffer = createOutputBuffer(inputDeformerBuffer);
-	MAutoCLEvent outputEvent;
-	MAutoCLMem outputBuffer = outputDeformerBuffer.buffer();
+#ifdef _SHOW_EXEC_PATH
+  // MObjectHandle thisHandle(thisMObject());
+  MINFO("cvWrap GPU DEFORM")
+#endif
+
+  // get the input GPU data and event
+  MGPUDeformerBuffer inputDeformerBuffer = inputData.getBuffer(sPositionsName());
+  const MAutoCLMem inputBuffer = inputDeformerBuffer.buffer();
+  unsigned int numElements = inputDeformerBuffer.elementCount();
+  const MAutoCLEvent inputEvent = inputDeformerBuffer.bufferReadyEvent();
+
+  // create the output buffer
+  MGPUDeformerBuffer outputDeformerBuffer = createOutputBuffer(inputDeformerBuffer);
+  MAutoCLEvent outputEvent;
+  MAutoCLMem outputBuffer = outputDeformerBuffer.buffer();
 
   MStatus status;
   numElements_ = numElements;
@@ -481,12 +495,12 @@ MPxGPUDeformer::DeformerStatus  CVWrapGPU::evaluate(MDataBlock& block,
   status = EnqueuePaintMapData(block, evaluationNode, numElements, plug);
   CHECK_MSTATUS(status);
 
-  if (!kernel_.get())  {
+  if (!kernel_.get()) {
     // Load the OpenCL kernel if we haven't yet.
     MString openCLKernelFile(pluginLoadPath);
     openCLKernelFile += "/cvwrap.cl";
     kernel_ = MOpenCLInfo::getOpenCLKernel(openCLKernelFile, "cvwrap");
-    if (kernel_.isNull())  {
+    if (kernel_.isNull()) {
       std::cerr << "Could not compile kernel " << openCLKernelFile.asChar() << "\n";
       return MPxGPUDeformer::kDeformerFailure;
     }
@@ -494,6 +508,10 @@ MPxGPUDeformer::DeformerStatus  CVWrapGPU::evaluate(MDataBlock& block,
   float envelope = block.inputValue(MPxDeformerNode::envelope, &status).asFloat();
   CHECK_MSTATUS(status);
   cl_int err = CL_SUCCESS;
+
+  auto defaultQueue = getMayaDefaultOpenCLCommandQueue();
+
+  {
   
   // Set all of our kernel parameters.  Input buffer and output buffer may be changing every frame
   // so always set them.
@@ -538,7 +556,7 @@ MPxGPUDeformer::DeformerStatus  CVWrapGPU::evaluate(MDataBlock& block,
   MOpenCLInfo::checkCLErrorStatus(err);
   err = clSetKernelArg(kernel_.get(), parameterId++, sizeof(cl_uint), (void*)&numElements_);
   MOpenCLInfo::checkCLErrorStatus(err);
-
+  
   // Figure out a good work group size for our kernel.
   size_t workGroupSize;
   size_t retSize;
@@ -550,21 +568,21 @@ MPxGPUDeformer::DeformerStatus  CVWrapGPU::evaluate(MDataBlock& block,
     &workGroupSize,
     &retSize);
   MOpenCLInfo::checkCLErrorStatus(err);
-
+  
   size_t localWorkSize = 256;
   if (retSize > 0) {
     localWorkSize = workGroupSize;
   }
   // global work size must be a multiple of localWorkSize
   size_t globalWorkSize = (localWorkSize - numElements_ % localWorkSize) + numElements_;
-
+  
   // set up our input events.  The input event could be NULL, in that case we need to pass
   // slightly different parameters into clEnqueueNDRangeKernel
   unsigned int numInputEvents = 0;
   if (inputEvent.get()) {
     numInputEvents = 1;
   }
-
+  
   // run the kernel
   err = clEnqueueNDRangeKernel(
     getMayaDefaultOpenCLCommandQueue(),
@@ -575,12 +593,14 @@ MPxGPUDeformer::DeformerStatus  CVWrapGPU::evaluate(MDataBlock& block,
     &localWorkSize,
     numInputEvents,
     numInputEvents ? inputEvent.getReadOnlyRef() : 0,
-    outputEvent.getReferenceForAssignment() );
+    outputEvent.getReferenceForAssignment());
   MOpenCLInfo::checkCLErrorStatus(err);
-
+  
   // set the buffer into the output data
   outputDeformerBuffer.setBufferReadyEvent(outputEvent);
   outputData.setBuffer(outputDeformerBuffer);
+  
+  }
 
   return MPxGPUDeformer::kDeformerSuccess;
 }

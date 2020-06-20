@@ -1,6 +1,9 @@
 #ifndef CVWRAPCMD_H
 #define CVWRAPCMD_H
 
+// This needs to be included first
+#include "common.h"
+
 #include <maya/MArgList.h>
 #include <maya/MDagPath.h>
 #include <maya/MDagPathArray.h>

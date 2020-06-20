@@ -14,15 +14,41 @@ set(SOURCE_FILES
 )
 
 if (WIN32)
+    set(Boost_USE_STATIC_LIBS ON)
+endif ()
+
+if (WIN32)
     set(COMPILE_FLAGS "/arch:AVX")
 else()
     set(COMPILE_FLAGS "-mavx")
 endif()
 
-add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES})
-target_link_libraries(${PROJECT_NAME} PRIVATE Maya::Maya)
-target_include_directories(${PROJECT_NAME} PRIVATE Maya::Maya)
-target_compile_options(${PROJECT_NAME} PRIVATE ${COMPILE_FLAGS})
+ADD_LIBRARY(
+    ${PROJECT_NAME}
+    SHARED
+    ${SOURCE_FILES}
+)
+
+TARGET_LINK_LIBRARIES(
+    ${PROJECT_NAME} 
+    PRIVATE 
+    Maya::Maya
+    MayaAPIUtils
+)
+
+TARGET_INCLUDE_DIRECTORIES(
+    ${PROJECT_NAME}
+    PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    Maya::Maya
+)
+
+TARGET_COMPILE_OPTIONS(
+    ${PROJECT_NAME}
+    PRIVATE
+    ${COMPILE_FLAGS}
+)
+
 MAYA_PLUGIN(${PROJECT_NAME})
 
 install(TARGETS ${PROJECT_NAME} ${MAYA_TARGET_TYPE} DESTINATION plug-ins)

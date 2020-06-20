@@ -1,6 +1,9 @@
 #ifndef CVWRAPDEFORMER_H
 #define CVWRAPDEFORMER_H
 
+// This needs to be included first
+#include "common.h"
+
 #include <maya/MDGModifier.h>
 #include <maya/MFloatArray.h>
 #include <maya/MIntArray.h>

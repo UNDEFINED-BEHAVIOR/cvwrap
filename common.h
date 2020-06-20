@@ -4,6 +4,7 @@
 
 #ifndef CVWRAP_COMMON_H
 #define CVWRAP_COMMON_H
+#define _SHOW_EXEC_PATH
 
 #include <maya/MDagPath.h>
 #include <maya/MDoubleArray.h>
@@ -16,6 +17,8 @@
 #include <map>
 #include <vector>
 #include <set>
+
+#include "mayaApiUtils/miostream.h"
 
 #ifdef __AVX__
 #include <xmmintrin.h>
