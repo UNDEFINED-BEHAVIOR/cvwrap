@@ -23,16 +23,22 @@ else()
     set(COMPILE_FLAGS "-mavx")
 endif()
 
-find_package(
-    OpenCL
-    # 1.1 
-    # EXACT
-)
+# find_package(
+#     OpenCL
+#     # 1.1 
+#     # EXACT
+# )
 # todo resolve opencl conflicts
-find_package(
-    VexCL REQUIRED COMPONENTS
-    OpenCL
-)
+
+# find_package(
+#     Boost
+# )
+
+# find_package(
+#     VexCL
+#     REQUIRED COMPONENTS
+#     Compute
+# )
 
 ADD_LIBRARY(
     ${PROJECT_NAME}
@@ -43,7 +49,8 @@ ADD_LIBRARY(
 TARGET_LINK_LIBRARIES(
     ${PROJECT_NAME} 
     PRIVATE 
-    VexCL::OpenCL
+    VexCL::Compute
+    # VexCL::OpenCL
     Maya::Maya
     MayaAPIUtils
 )
@@ -61,12 +68,12 @@ TARGET_COMPILE_OPTIONS(
     ${COMPILE_FLAGS}
 )
 
-TARGET_COMPILE_DEFINITIONS(
-    ${PROJECT_NAME}
-    PUBLIC
-    __CL_ENABLE_EXCEPTIONS
-    CL_USE_DEPRECATED_OPENCL_1_1_APIS
-)
+# TARGET_COMPILE_DEFINITIONS(
+#     ${PROJECT_NAME}
+#     PUBLIC
+#     __CL_ENABLE_EXCEPTIONS
+#     CL_USE_DEPRECATED_OPENCL_1_1_APIS
+# )
 
 MAYA_PLUGIN(${PROJECT_NAME})
 

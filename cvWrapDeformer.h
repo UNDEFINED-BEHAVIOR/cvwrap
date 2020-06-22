@@ -20,7 +20,30 @@
 
 #include <map>
 #include <vector>
+#include <memory>
 
+#include <boost/compute.hpp>
+#include <vexcl/vexcl.hpp>
+
+namespace bcompute = boost::compute;
+
+// class CLThinCommandQueue:public bcompute::command_queue
+// {
+//
+// public:
+//   
+//   explicit CLThinCommandQueue(cl_command_queue queue, bool retain = true)
+//       : m_queue(queue)
+//   {
+//       if(m_queue && retain){
+//           clRetainCommandQueue(m_queue);
+//       }
+//   }
+//   ~CLThinCommandQueue();
+//
+// private:
+//
+// };
 
 struct TaskData {
 #include <vexcl/vector.hpp>
@@ -54,7 +77,6 @@ class CVWrap : public MPxDeformerNode {
 
   static void* creator();
   static MStatus initialize();
-
 
   /**
     Distributes the ThreadData objects to the parallel threads.
@@ -92,7 +114,9 @@ private:
 
 
 // the GPU override implementation of the offsetNode
-// 
+//
+
+using up_command_queue = std::unique_ptr<bcompute::command_queue>;
 
 class CVWrapGPU : public MPxGPUDeformer {
  public:
@@ -109,6 +133,10 @@ class CVWrapGPU : public MPxGPUDeformer {
   static bool ValidateNode(MDataBlock& block, const MEvaluationNode&, const MPlug& plug, MStringArray* messages);
   /**< The path of where the plug-in is loaded from.  Used to find the cl kernel. */
   static MString pluginLoadPath;
+
+
+  // static bcompute::command_queue boost_defaultMayaCommandQueue;
+  // static up_command_queue p_boost_defaultMayaCommandQueue;
 
 private:
   // helper methods

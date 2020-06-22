@@ -6,13 +6,31 @@
 #define CVWRAP_COMMON_H
 #define _SHOW_EXEC_PATH
 
-// CL include have to come before all anything else or template error will occurs..
-#include <CL/cl.h>
-// cl.hpp from vexcl
-#include <CL/cl.hpp>
-#include <CL/cl_platform.h>
-#include <vexcl/vexcl.hpp>
+//
+#define CL_EXT_SUFFIX__VERSION_1_2  
+// Maya clew only supports up to 1_1
+#define BOOST_COMPUTE_MAX_CL_VERSION 101
 
+// #define uint unsigned int
+// #define ulong unsigned long
+// #define ushort unsigned short
+// #define uchar unsigned char
+
+// using ushort = unsigned short;
+// using uchar = unsigned char;
+// using uint = unsigned int;
+// using ulong = unsigned long;
+
+
+// pre include everything from maya clew to override all cl headers
+// including everythign early
+#include <clew/clew_cl.h>
+#include <clew/clew_cl_platform.h>
+
+// #include <clew/clew_cl_gl.h>
+// #include <clew/clew_cl_gl_ext.h>
+// #include <clew/clew_cl_d3d11.h>
+// #include <clew/clew_cl_d3d11_ext.h>
 
 #include <maya/MDagPath.h>
 #include <maya/MDoubleArray.h>
@@ -32,6 +50,41 @@
 #include <xmmintrin.h>
 #include <immintrin.h>
 #endif
+
+#define cl_UCHAR cl_uchar
+#define cl_UCHAR2 cl_uchar2
+#define cl_UCHAR4 cl_uchar4
+#define cl_UCHAR8 cl_uchar8
+#define cl_UCHAR16 cl_uchar16
+#define cl_UINT cl_uint
+#define cl_UINT2 cl_uint2
+#define cl_UINT4 cl_uint4
+#define cl_UINT8 cl_uint8
+#define cl_UINT16 cl_uint16
+#define cl_ULONG cl_ulong
+#define cl_ULONG2 cl_ulong2
+#define cl_ULONG4 cl_ulong4
+#define cl_ULONG8 cl_ulong8
+#define cl_ULONG16 cl_ulong16
+#define cl_USHORT cl_ushort
+#define cl_USHORT2 cl_ushort2
+#define cl_USHORT4 cl_ushort4
+#define cl_USHORT8 cl_ushort8
+#define cl_USHORT16 cl_ushort16
+
+#define UINT_ uint_
+#define ULONG_ ulong_
+#define UCHAR_ uchar_
+#define USHORT_ ushort_
+
+
+// uint bb = 5;
+// cl_uint4 xx;
+// cl_ulong8 bbb;
+// cl_ushort16 bsdfasdfb;
+// cl_uchar2 xxx;
+//
+// cl_ULONG2 ttttt;
 
 /**
   Helper function to start a new progress bar.
@@ -76,7 +129,7 @@ bool IsShapeNode(MDagPath& path);
   @param[in] intermediate true to get the intermediate shape.
   @return MStatus.
  */
-MStatus GetShapeNode(MDagPath& path, bool intermediate=false);
+MStatus GetShapeNode(MDagPath& path, bool intermediate = false);
 
 
 /**
@@ -97,7 +150,8 @@ MStatus DeleteIntermediateObjects(MDagPath& path);
 /**
   Helper struct to hold the 3 barycentric coordinates.
 */
-struct BaryCoords {
+struct BaryCoords
+{
   float coords[3];
   float operator[](int index) const { return coords[index]; }
   float& operator[](int index) { return coords[index]; }
@@ -112,8 +166,13 @@ struct BaryCoords {
   @param[in] C Triangle point.
   @param[out] coords Barycentric coordinates storage.
 */
-void GetBarycentricCoordinates(const MPoint& P, const MPoint& A, const MPoint& B, const MPoint& C,
-                               BaryCoords& coords);
+void GetBarycentricCoordinates(
+  const MPoint& P,
+  const MPoint& A,
+  const MPoint& B,
+  const MPoint& C,
+  BaryCoords& coords
+);
 
 
 /**
@@ -122,7 +181,7 @@ void GetBarycentricCoordinates(const MPoint& P, const MPoint& A, const MPoint& B
   @param[in] pathMesh Path to a mesh.
   @param[out] adjacency Ajdancency storage of the adjancency per vertex id.
  */
-MStatus GetAdjacency(MDagPath& pathMesh, std::vector<std::set<int> >& adjacency);
+MStatus GetAdjacency(MDagPath& pathMesh, std::vector<std::set<int>>& adjacency);
 
 
 /**
@@ -135,8 +194,14 @@ MStatus GetAdjacency(MDagPath& pathMesh, std::vector<std::set<int> >& adjacency)
   @param[out] distances Storage for the distances to the crawled points.
   @return MStatus
  */
-MStatus CrawlSurface(const MPoint& startPoint, const MIntArray& vertexIndices, MPointArray& points, double maxDistance,
-                     std::vector<std::set<int> >& adjacency, std::map<int, double>& distances);
+MStatus CrawlSurface(
+  const MPoint& startPoint,
+  const MIntArray& vertexIndices,
+  MPointArray& points,
+  double maxDistance,
+  std::vector<std::set<int>>& adjacency,
+  std::map<int, double>& distances
+);
 
 
 /**
@@ -147,18 +212,26 @@ MStatus CrawlSurface(const MPoint& startPoint, const MIntArray& vertexIndices, M
   @param[out] vertexIds Storage for the vertex ids sampled during the crawl.
   @param[out] weights Storage for the calculated weights of each sampled vertex.
 */
-void CalculateSampleWeights(const std::map<int, double>& distances, double radius,
-                            MIntArray& vertexIds, MDoubleArray& weights);
+void CalculateSampleWeights(
+  const std::map<int, double>& distances,
+  double radius,
+  MIntArray& vertexIds,
+  MDoubleArray& weights
+);
 
- /**
-   Creates an orthonormal basis using the given point and two axes.
-   @param[in] origin Position.
-   @param[in] normal Normal vector.
-   @param[in] up Up vector.
-   @param[out] matrix Generated matrix.
- */
-void CreateMatrix(const MPoint& origin, const MVector& normal, const MVector& up,
-                  MMatrix& matrix);
+/**
+  Creates an orthonormal basis using the given point and two axes.
+  @param[in] origin Position.
+  @param[in] normal Normal vector.
+  @param[in] up Up vector.
+  @param[out] matrix Generated matrix.
+*/
+void CreateMatrix(
+  const MPoint& origin,
+  const MVector& normal,
+  const MVector& up,
+  MMatrix& matrix
+);
 
 /**
   Calculates the components necessary to create a wrap basis matrix.
@@ -173,11 +246,18 @@ void CreateMatrix(const MPoint& origin, const MVector& normal, const MVector& up
   @param[out] up The up vector of the coordinate system.
   @param[out] normal The normal vector of the coordinate system.
 */
-void CalculateBasisComponents(const MDoubleArray& weights, const BaryCoords& coords,
-                              const MIntArray& triangleVertices, const MPointArray& points,
-                              const MFloatVectorArray& normals, const MIntArray& sampleIds,
-                              double* alignedStorage,
-                              MPoint& origin, MVector& up, MVector& normal);
+void CalculateBasisComponents(
+  const MDoubleArray& weights,
+  const BaryCoords& coords,
+  const MIntArray& triangleVertices,
+  const MPointArray& points,
+  const MFloatVectorArray& normals,
+  const MIntArray& sampleIds,
+  double* alignedStorage,
+  MPoint& origin,
+  MVector& up,
+  MVector& normal
+);
 
 /**
   Ensures that the up and normal vectors are perpendicular to each other.
@@ -188,27 +268,33 @@ void CalculateBasisComponents(const MDoubleArray& weights, const BaryCoords& coo
   @param[in] up The up vector of the coordinate system.
   @param[out] normal The normal vector of the coordinate system.
 */
-void GetValidUp(const MDoubleArray& weights, const MPointArray& points,
-                const MIntArray& sampleIds, const MPoint& origin, const MVector& normal,
-                MVector& up);
+void GetValidUp(
+  const MDoubleArray& weights,
+  const MPointArray& points,
+  const MIntArray& sampleIds,
+  const MPoint& origin,
+  const MVector& normal,
+  MVector& up
+);
 
 
 template <typename T>
-struct ThreadData {
+struct ThreadData
+{
   unsigned int start;
   unsigned int end;
   unsigned int numTasks;
   double* alignedStorage;
   T* pData;
 
-#ifdef __AVX__
+  #ifdef __AVX__
   ThreadData() {
     alignedStorage = (double*) _mm_malloc(4*sizeof(double), 256);
   }
   ~ThreadData() {
     _mm_free(alignedStorage);
   }
-#endif
+  #endif
 };
 
 
@@ -221,12 +307,18 @@ struct ThreadData {
   @param[out] threadData The array of ThreadData objects.  It is assumed the array is of size taskCount.
 */
 template <typename T>
-void CreateThreadData(int taskCount, unsigned int elementCount, T* taskData, ThreadData<T>* threadData) {
+void CreateThreadData(
+  int taskCount,
+  unsigned int elementCount,
+  T* taskData,
+  ThreadData<T>* threadData
+)
+{
   unsigned int taskLength = (elementCount + taskCount - 1) / taskCount;
   unsigned int start = 0;
   unsigned int end = taskLength;
   int lastTask = taskCount - 1;
-  for(int i = 0; i < taskCount; i++) {
+  for (int i = 0; i < taskCount; i++) {
     if (i == lastTask) {
       end = elementCount;
     }
