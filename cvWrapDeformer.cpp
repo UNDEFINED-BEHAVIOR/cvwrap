@@ -597,24 +597,34 @@ MPxGPUDeformer::DeformerStatus CVWrapGPU::evaluate(
 
   cl_mem native_buf = driverPoints_.get();
   MINFO("native buf is " << native_buf)
-  bcompute::buffer boost_buf(native_buf);
-  MINFO("Boost buf created..")
+  boost::compute::buffer boost_buf(native_buf);
+  // MINFO("Boost buf created..")
 
-  // MINFO("boost buf created, addr " << &boost_buf << " size " << boost_buf.get_memory_size())
-  // MINFO("boost buf created, retrived native buf " << boost_buf.get())
+  MINFO("boost buf created, addr " << &boost_buf << " size " << boost_buf.get_memory_size())
+  MINFO("boost buf created, retrived native buf " << boost_buf.get())
+
+
+    // vex::device_vector vex_dev_vec(boost_buf);
+  auto vex_dev_vec = vex::device_vector<cl_mem>(boost_buf);
+  MINFO("vex device vector created..")
+
+  auto vex_vector = vex::vector(
+    boost_cq,
+    vex_dev_vec
+  );
+  MINFO("vex queued vector created..")
+
+  MINFO("peeking vex queued vec..")
+
+  // std::vector<float*> fvec(5000);
+
+  // vex::copy(
+  //   vex_vector.begin(), vex_vector.end(), reinterpret_cast<float*>(fvec.data())
+  // );
+
+  MINFO(vex_vector.reinterpret<float>())
 
   MINFO("end debug")
-
-  // cl::Buffer clhppbuf = outputBuffer.get();
-  // auto bbb = vex::backend::device_vector<float>(outputBuffer.get());
-  //
-  // auto aa = vex::vector(
-  //   defaultQueue,
-  //   bbb
-  // );
-  //
-  // MINFO("vexcl convert success, test read out")
-  // MINFO(aa)
 
   {
   
