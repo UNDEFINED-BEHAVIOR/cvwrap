@@ -4,6 +4,7 @@
 // #include <vexcl/vexcl.hpp>
 
 #include <string>
+#include "common.h"
 #include "cvWrapDeformer.h"
 #include "cvWrapCmd.h"
 

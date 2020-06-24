@@ -14,7 +14,7 @@
 #include <maya/MObjectHandle.h>
 #include <cassert>
 
-#include <vexcl/vector.hpp>
+// #include <vexcl/vector.hpp>
 
 
 MTypeId CVWrap::id(0x0011580C);
@@ -604,118 +604,184 @@ MPxGPUDeformer::DeformerStatus CVWrapGPU::evaluate(
   MINFO("boost buf created, retrived native buf " << boost_buf.get())
 
 
-    // vex::device_vector vex_dev_vec(boost_buf);
-  auto vex_dev_vec = vex::device_vector<cl_mem>(boost_buf);
-  MINFO("vex device vector created..")
-
-  auto vex_vector = vex::vector(
-    boost_cq,
-    vex_dev_vec
-  );
-  MINFO("vex queued vector created..")
-
-  MINFO("peeking vex queued vec..")
-
+  //   // vex::device_vector vex_dev_vec(boost_buf);
+  // auto vex_dev_vec = vex::device_vector<cl_mem>(boost_buf);
+  // MINFO("vex device vector created..")
+  //
+  // auto vex_vector = vex::vector(
+  //   boost_cq,
+  //   vex_dev_vec
+  // );
+  // MINFO("vex queued vector created..")
+  //
+  // MINFO("peeking vex queued vec..")
+  
   // std::vector<float*> fvec(5000);
-
+  
   // vex::copy(
   //   vex_vector.begin(), vex_vector.end(), reinterpret_cast<float*>(fvec.data())
   // );
+  
+  // MINFO(vex_vector.reinterpret<float>())
 
-  MINFO(vex_vector.reinterpret<float>())
+  // MINFO(vex_vector.reinterpret<cl_float>())
+  // auto& peekarr = vex_vector.reinterpret<cl_float>();
+  // int numele = peekarr.size();
+  // MINFO("numelements " << numele)
+
+  // for (int i = 0; i < numele; i+=3) {
+  //   // auto& tvec{
+  //   // reinterpret_cast<cl_float3>(peekarr[i])
+  //   // };
+  //   // cl_float3 b = { 1,2,3 };
+  //   // cl_float3 b = reinterpret_cast<float3>(peekarr[i]);
+  //   // cl_float3 b = (float3)(peekarr[i]);
+  //   // vex::vector<cl_float> b{
+  //   //     peekarr[i],
+  //   //     peekarr[i + 1],
+  //   //     peekarr[i + 2]
+  //   // };
+  //
+  //   float3 tvec = {
+  //     peekarr[i],
+  //     peekarr[i + 1],
+  //     peekarr[i + 2]
+  //   };
+  //
+  //   // auto tvec= float3{
+  //   // };
+  //   // auto tvec= float3{
+  //   //     peekarr[i],
+  //   //     peekarr[i + 1],
+  //   //     peekarr[i + 2]
+  //   // };
+  //   MINFO(i << " pos: " << tvec[0] << " "<< tvec[1] << " "<< tvec[2] << " " )
+  //   // MINFO(i << " pos: " << 
+  //   //
+  //   // peekarr[i] <<
+  //   // peekarr[i + 1] <<
+  //   // peekarr[i + 2]
+  //   //
+  //   // )
+  // }
+  
+  // MINFO("numelements " << peekarr.size())
 
   MINFO("end debug")
 
-  {
+  // {
+  //
+  // // Set all of our kernel parameters.  Input buffer and output buffer may be changing every frame
+  // // so always set them.
+  // unsigned int parameterId = 0;
+  // err = clSetKernelArg(kernel_.get(), parameterId++, sizeof(cl_mem), (void*)outputBuffer.getReadOnlyRef());
+  // MOpenCLInfo::checkCLErrorStatus(err);
+  // err = clSetKernelArg(kernel_.get(), parameterId++, sizeof(cl_mem), (void*)inputBuffer.getReadOnlyRef());
+  // MOpenCLInfo::checkCLErrorStatus(err);
+  // err = clSetKernelArg(kernel_.get(), parameterId++, sizeof(cl_mem), (void*)driverPoints_.getReadOnlyRef());
+  // MOpenCLInfo::checkCLErrorStatus(err);
+  // err = clSetKernelArg(kernel_.get(), parameterId++, sizeof(cl_mem), (void*)driverNormals_.getReadOnlyRef());
+  // MOpenCLInfo::checkCLErrorStatus(err);
+  // err = clSetKernelArg(kernel_.get(), parameterId++, sizeof(cl_mem), (void*)paintWeights_.getReadOnlyRef());
+  // MOpenCLInfo::checkCLErrorStatus(err);
+  // err = clSetKernelArg(kernel_.get(), parameterId++, sizeof(cl_mem), (void*)sampleCounts_.getReadOnlyRef());
+  // MOpenCLInfo::checkCLErrorStatus(err);
+  // err = clSetKernelArg(kernel_.get(), parameterId++, sizeof(cl_mem), (void*)sampleOffsets_.getReadOnlyRef());
+  // MOpenCLInfo::checkCLErrorStatus(err);
+  // err = clSetKernelArg(kernel_.get(), parameterId++, sizeof(cl_mem), (void*)sampleIds_.getReadOnlyRef());
+  // MOpenCLInfo::checkCLErrorStatus(err);
+  // err = clSetKernelArg(kernel_.get(), parameterId++, sizeof(cl_mem), (void*)sampleWeights_.getReadOnlyRef());
+  // MOpenCLInfo::checkCLErrorStatus(err);
+  // err = clSetKernelArg(kernel_.get(), parameterId++, sizeof(cl_mem), (void*)triangleVerts_.getReadOnlyRef());
+  // MOpenCLInfo::checkCLErrorStatus(err);
+  // err = clSetKernelArg(kernel_.get(), parameterId++, sizeof(cl_mem), (void*)baryCoords_.getReadOnlyRef());
+  // MOpenCLInfo::checkCLErrorStatus(err);
+  // err = clSetKernelArg(kernel_.get(), parameterId++, sizeof(cl_mem), (void*)bindMatrices_.getReadOnlyRef());
+  // MOpenCLInfo::checkCLErrorStatus(err);
+  // err = clSetKernelArg(kernel_.get(), parameterId++, sizeof(cl_mem), (void*)drivenMatrices_.getReadOnlyRef());
+  // MOpenCLInfo::checkCLErrorStatus(err);
+  // // get the world space and inverse world space matrix mem handles
+  // MGPUDeformerBuffer inputWorldSpaceMatrixDeformerBuffer = inputData.getBuffer(sGeometryMatrixName());
+  // const MAutoCLMem deformerWorldSpaceMatrix = inputWorldSpaceMatrixDeformerBuffer.buffer();
+  // MGPUDeformerBuffer inputInvWorldSpaceMatrixDeformerBuffer = inputData.getBuffer(sInverseGeometryMatrixName());
+  // const MAutoCLMem deformerInvWorldSpaceMatrix = inputInvWorldSpaceMatrixDeformerBuffer.buffer();
+  // // Note: these matrices are in row major order
+  // err = clSetKernelArg(kernel_.get(), parameterId++, sizeof(cl_mem), (void*)deformerWorldSpaceMatrix.getReadOnlyRef());
+  // MOpenCLInfo::checkCLErrorStatus(err);
+  // err = clSetKernelArg(kernel_.get(), parameterId++, sizeof(cl_mem), (void*)deformerInvWorldSpaceMatrix.getReadOnlyRef());
+  // MOpenCLInfo::checkCLErrorStatus(err);
+  // err = clSetKernelArg(kernel_.get(), parameterId++, sizeof(cl_float), (void*)&envelope);
+  // MOpenCLInfo::checkCLErrorStatus(err);
+  // err = clSetKernelArg(kernel_.get(), parameterId++, sizeof(cl_uint), (void*)&numElements_);
+  // MOpenCLInfo::checkCLErrorStatus(err);
+  //
+  // // Figure out a good work group size for our kernel.
+  // size_t workGroupSize;
+  // size_t retSize;
+  // err = clGetKernelWorkGroupInfo(
+  //   kernel_.get(),
+  //   MOpenCLInfo::getOpenCLDeviceId(),
+  //   CL_KERNEL_WORK_GROUP_SIZE,
+  //   sizeof(size_t),
+  //   &workGroupSize,
+  //   &retSize);
+  // MOpenCLInfo::checkCLErrorStatus(err);
+  //
+  // size_t localWorkSize = 256;
+  // if (retSize > 0) {
+  //   localWorkSize = workGroupSize;
+  // }
+  // // global work size must be a multiple of localWorkSize
+  // size_t globalWorkSize = (localWorkSize - numElements_ % localWorkSize) + numElements_;
+  //
+  // // set up our input events.  The input event could be NULL, in that case we need to pass
+  // // slightly different parameters into clEnqueueNDRangeKernel
+  // unsigned int numInputEvents = 0;
+  // if (inputEvent.get()) {
+  //   numInputEvents = 1;
+  // }
+  //
+  // // run the kernel
+  // err = clEnqueueNDRangeKernel(
+  //   getMayaDefaultOpenCLCommandQueue(),
+  //   kernel_.get(),
+  //   1,
+  //   NULL,
+  //   &globalWorkSize,
+  //   &localWorkSize,
+  //   numInputEvents,
+  //   numInputEvents ? inputEvent.getReadOnlyRef() : 0,
+  //   outputEvent.getReferenceForAssignment());
+  // MOpenCLInfo::checkCLErrorStatus(err);
+
+  // }
+
+  // {
+    // to ensure kernel finishes
+    auto& inputPosVV = vex::vector(
+      boost_cq,
+      vex::device_vector<cl_mem>(
+        boost::compute::buffer(inputBuffer.get())
+      )
+    ).reinterpret<cl_float>();
   
-  // Set all of our kernel parameters.  Input buffer and output buffer may be changing every frame
-  // so always set them.
-  unsigned int parameterId = 0;
-  err = clSetKernelArg(kernel_.get(), parameterId++, sizeof(cl_mem), (void*)outputBuffer.getReadOnlyRef());
-  MOpenCLInfo::checkCLErrorStatus(err);
-  err = clSetKernelArg(kernel_.get(), parameterId++, sizeof(cl_mem), (void*)inputBuffer.getReadOnlyRef());
-  MOpenCLInfo::checkCLErrorStatus(err);
-  err = clSetKernelArg(kernel_.get(), parameterId++, sizeof(cl_mem), (void*)driverPoints_.getReadOnlyRef());
-  MOpenCLInfo::checkCLErrorStatus(err);
-  err = clSetKernelArg(kernel_.get(), parameterId++, sizeof(cl_mem), (void*)driverNormals_.getReadOnlyRef());
-  MOpenCLInfo::checkCLErrorStatus(err);
-  err = clSetKernelArg(kernel_.get(), parameterId++, sizeof(cl_mem), (void*)paintWeights_.getReadOnlyRef());
-  MOpenCLInfo::checkCLErrorStatus(err);
-  err = clSetKernelArg(kernel_.get(), parameterId++, sizeof(cl_mem), (void*)sampleCounts_.getReadOnlyRef());
-  MOpenCLInfo::checkCLErrorStatus(err);
-  err = clSetKernelArg(kernel_.get(), parameterId++, sizeof(cl_mem), (void*)sampleOffsets_.getReadOnlyRef());
-  MOpenCLInfo::checkCLErrorStatus(err);
-  err = clSetKernelArg(kernel_.get(), parameterId++, sizeof(cl_mem), (void*)sampleIds_.getReadOnlyRef());
-  MOpenCLInfo::checkCLErrorStatus(err);
-  err = clSetKernelArg(kernel_.get(), parameterId++, sizeof(cl_mem), (void*)sampleWeights_.getReadOnlyRef());
-  MOpenCLInfo::checkCLErrorStatus(err);
-  err = clSetKernelArg(kernel_.get(), parameterId++, sizeof(cl_mem), (void*)triangleVerts_.getReadOnlyRef());
-  MOpenCLInfo::checkCLErrorStatus(err);
-  err = clSetKernelArg(kernel_.get(), parameterId++, sizeof(cl_mem), (void*)baryCoords_.getReadOnlyRef());
-  MOpenCLInfo::checkCLErrorStatus(err);
-  err = clSetKernelArg(kernel_.get(), parameterId++, sizeof(cl_mem), (void*)bindMatrices_.getReadOnlyRef());
-  MOpenCLInfo::checkCLErrorStatus(err);
-  err = clSetKernelArg(kernel_.get(), parameterId++, sizeof(cl_mem), (void*)drivenMatrices_.getReadOnlyRef());
-  MOpenCLInfo::checkCLErrorStatus(err);
-  // get the world space and inverse world space matrix mem handles
-  MGPUDeformerBuffer inputWorldSpaceMatrixDeformerBuffer = inputData.getBuffer(sGeometryMatrixName());
-  const MAutoCLMem deformerWorldSpaceMatrix = inputWorldSpaceMatrixDeformerBuffer.buffer();
-  MGPUDeformerBuffer inputInvWorldSpaceMatrixDeformerBuffer = inputData.getBuffer(sInverseGeometryMatrixName());
-  const MAutoCLMem deformerInvWorldSpaceMatrix = inputInvWorldSpaceMatrixDeformerBuffer.buffer();
-  // Note: these matrices are in row major order
-  err = clSetKernelArg(kernel_.get(), parameterId++, sizeof(cl_mem), (void*)deformerWorldSpaceMatrix.getReadOnlyRef());
-  MOpenCLInfo::checkCLErrorStatus(err);
-  err = clSetKernelArg(kernel_.get(), parameterId++, sizeof(cl_mem), (void*)deformerInvWorldSpaceMatrix.getReadOnlyRef());
-  MOpenCLInfo::checkCLErrorStatus(err);
-  err = clSetKernelArg(kernel_.get(), parameterId++, sizeof(cl_float), (void*)&envelope);
-  MOpenCLInfo::checkCLErrorStatus(err);
-  err = clSetKernelArg(kernel_.get(), parameterId++, sizeof(cl_uint), (void*)&numElements_);
-  MOpenCLInfo::checkCLErrorStatus(err);
+    auto& outputPosVV = vex::vector(
+      boost_cq,
+      vex::device_vector<cl_mem>(
+        boost::compute::buffer(outputBuffer.get())
+      )
+    ).reinterpret<cl_float>();
+    outputPosVV = inputPosVV + 1.0f;
+  // }
   
-  // Figure out a good work group size for our kernel.
-  size_t workGroupSize;
-  size_t retSize;
-  err = clGetKernelWorkGroupInfo(
-    kernel_.get(),
-    MOpenCLInfo::getOpenCLDeviceId(),
-    CL_KERNEL_WORK_GROUP_SIZE,
-    sizeof(size_t),
-    &workGroupSize,
-    &retSize);
-  MOpenCLInfo::checkCLErrorStatus(err);
-  
-  size_t localWorkSize = 256;
-  if (retSize > 0) {
-    localWorkSize = workGroupSize;
-  }
-  // global work size must be a multiple of localWorkSize
-  size_t globalWorkSize = (localWorkSize - numElements_ % localWorkSize) + numElements_;
-  
-  // set up our input events.  The input event could be NULL, in that case we need to pass
-  // slightly different parameters into clEnqueueNDRangeKernel
-  unsigned int numInputEvents = 0;
-  if (inputEvent.get()) {
-    numInputEvents = 1;
-  }
-  
-  // run the kernel
-  err = clEnqueueNDRangeKernel(
-    getMayaDefaultOpenCLCommandQueue(),
-    kernel_.get(),
-    1,
-    NULL,
-    &globalWorkSize,
-    &localWorkSize,
-    numInputEvents,
-    numInputEvents ? inputEvent.getReadOnlyRef() : 0,
-    outputEvent.getReferenceForAssignment());
-  MOpenCLInfo::checkCLErrorStatus(err);
-  
+  outputBuffer.attach(
+    outputPosVV().raw()
+  );
+
   // set the buffer into the output data
   outputDeformerBuffer.setBufferReadyEvent(outputEvent);
   outputData.setBuffer(outputDeformerBuffer);
   
-  }
 
   return MPxGPUDeformer::kDeformerSuccess;
 }

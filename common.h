@@ -6,31 +6,19 @@
 #define CVWRAP_COMMON_H
 #define _SHOW_EXEC_PATH
 
+#define VEXCL_SHOW_KERNELS
+// #define VEXCL_SHOW_KERNELS
+
 // blank out unsupported defines
 #define CL_EXT_SUFFIX__VERSION_1_2  
 // Maya clew only supports up to 1_1
 #define BOOST_COMPUTE_MAX_CL_VERSION 101
-
-// #define uint unsigned int
-// #define ulong unsigned long
-// #define ushort unsigned short
-// #define uchar unsigned char
-
-// using ushort = unsigned short;
-// using uchar = unsigned char;
-// using uint = unsigned int;
-// using ulong = unsigned long;
-
 
 // pre include everything from maya clew to override all cl headers
 // including everythign early
 #include <clew/clew_cl.h>
 #include <clew/clew_cl_platform.h>
 
-// #include <clew/clew_cl_gl.h>
-// #include <clew/clew_cl_gl_ext.h>
-// #include <clew/clew_cl_d3d11.h>
-// #include <clew/clew_cl_d3d11_ext.h>
 
 #include <maya/MDagPath.h>
 #include <maya/MDoubleArray.h>
@@ -51,40 +39,10 @@
 #include <immintrin.h>
 #endif
 
-#define cl_UCHAR cl_uchar
-#define cl_UCHAR2 cl_uchar2
-#define cl_UCHAR4 cl_uchar4
-#define cl_UCHAR8 cl_uchar8
-#define cl_UCHAR16 cl_uchar16
-#define cl_UINT cl_uint
-#define cl_UINT2 cl_uint2
-#define cl_UINT4 cl_uint4
-#define cl_UINT8 cl_uint8
-#define cl_UINT16 cl_uint16
-#define cl_ULONG cl_ulong
-#define cl_ULONG2 cl_ulong2
-#define cl_ULONG4 cl_ulong4
-#define cl_ULONG8 cl_ulong8
-#define cl_ULONG16 cl_ulong16
-#define cl_USHORT cl_ushort
-#define cl_USHORT2 cl_ushort2
-#define cl_USHORT4 cl_ushort4
-#define cl_USHORT8 cl_ushort8
-#define cl_USHORT16 cl_ushort16
-
-#define UINT_ uint_
-#define ULONG_ ulong_
-#define UCHAR_ uchar_
-#define USHORT_ ushort_
-
-
-// uint bb = 5;
-// cl_uint4 xx;
-// cl_ulong8 bbb;
-// cl_ushort16 bsdfasdfb;
-// cl_uchar2 xxx;
-//
-// cl_ULONG2 ttttt;
+#define ULONG ulong
+#define USHORT ushort
+#define UINT uint
+#define UCHAR uchar
 
 /**
   Helper function to start a new progress bar.
