@@ -23,22 +23,11 @@ else()
     set(COMPILE_FLAGS "-mavx")
 endif()
 
-# find_package(
-#     OpenCL
-#     # 1.1 
-#     # EXACT
-# )
-# todo resolve opencl conflicts
-
-# find_package(
-#     Boost
-# )
-
-# find_package(
-#     VexCL
-#     REQUIRED COMPONENTS
-#     Compute
-# )
+find_package(
+    VexCL
+    REQUIRED COMPONENTS
+    Compute
+)
 
 ADD_LIBRARY(
     ${PROJECT_NAME}
@@ -78,5 +67,5 @@ TARGET_COMPILE_OPTIONS(
 MAYA_PLUGIN(${PROJECT_NAME})
 
 install(TARGETS ${PROJECT_NAME} ${MAYA_TARGET_TYPE} DESTINATION plug-ins)
-install(FILES "cvwrap.cl" DESTINATION plug-ins)
+# install(FILES "cvwrap.cl" DESTINATION plug-ins)
 
