@@ -6,13 +6,15 @@
 #define CVWRAP_COMMON_H
 #define _SHOW_EXEC_PATH
 
-#define VEXCL_SHOW_KERNELS
+// #define VEXCL_SHOW_KERNELS
 // #define VEXCL_SHOW_KERNELS
 
 // blank out unsupported defines
 #define CL_EXT_SUFFIX__VERSION_1_2  
 // Maya clew only supports up to 1_1
 #define BOOST_COMPUTE_MAX_CL_VERSION 101
+
+// #define _USE_PLAIN_CL
 
 // pre include everything from maya clew to override all cl headers
 // including everythign early
@@ -33,6 +35,8 @@
 #include <set>
 
 #include "mayaApiUtils/miostream.h"
+
+// #include "vexcl/backend/compute/compiler.hpp"
 
 #ifdef __AVX__
 #include <xmmintrin.h>
